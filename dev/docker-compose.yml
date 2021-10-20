@@ -1,0 +1,53 @@
+version: '2'
+services:
+  zookeeper:
+    image: wurstmeister/zookeeper
+    container_name: zookeeper
+    ports:
+      - "2181:2181"
+  kafka:
+    image: wurstmeister/kafka
+    container_name: kafka
+    ports:
+      - "9092:9092"
+    environment:
+      KAFKA_BROKER_ID: 1
+      KAFKA_LISTENERS: PLAINTEXT://kafka:9092
+      KAFKA_ADVERTISED_LISTENERS: PLAINTEXT://kafka:9092
+      KAFKA_ZOOKEEPER_CONNECT: zookeeper:2181
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
+  backend:
+    image: all-knu-backend
+    container_name: all-knu-backend
+    ports:
+      - "8080:8080"
+    environment:
+      SPRING_PROFILES_ACTIVE: dev
+  fcm:
+    image: all-knu-fcm
+    container_name: all-knu-fcm
+    ports:
+      - "8081:8080"
+    environment:
+      SPRING_PROFILES_ACTIVE: dev 
+
+  admin-backend:
+    image: all-knu-admin-backend
+    container_name: all-knu-admin-backend
+    ports:
+      - "8082:8080"
+    environment:
+      SPRING_PROFILES_ACTIVE: dev
+
+  frontend:
+    image: all-knu-frontend
+    container_name: all-knu-frontend
+    ports:
+     - "5000:8080"
+
+  admin-frontend:
+    image: all-knu-frontend-admin
+    container_name: all-knu-frontend-admin
+    ports:
+      - "5001:5000"
